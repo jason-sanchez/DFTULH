@@ -1,0 +1,5 @@
+required directory
+c:\smc
+c:\smc\log
+
+smcConsole.ini located in c:\smc
