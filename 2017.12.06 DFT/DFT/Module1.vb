@@ -26,8 +26,8 @@ Module Module1
 
     '20121120 - Added patient type in PV1_2.
 
-    Public objIniFile As New INIFile("d:\w3Production\HL7Mapper.ini") '20140817 'Prod
-    'Public objIniFile As New INIFile("c:\W3Feeds\HL7Mapper.ini") '20140817 'Test
+    'Public objIniFile As New INIFile("d:\w3Production\HL7Mapper.ini") '20140817 'Prod
+    Public objIniFile As New INIFile("c:\W3Feeds\HL7Mapper.ini") '20140817 'Test
     'Public objIniFile As New INIFile("C:\KY1 Test Environment\HL7Mapper.ini") 'Local
 
     Dim sql As String = ""
@@ -36,9 +36,9 @@ Module Module1
     Dim gblStrPostDate As String = ""
     Dim strHL7Output As String = ""
 
-    Public conIniFile As New INIFile("d:\W3Production\KY1ConnProd.ini") '20140805 Prod
+    'Public conIniFile As New INIFile("d:\W3Production\KY1ConnProd.ini") '20140805 Prod
     'Public conIniFile As New INIFile("C:\KY1 Test Environment\KY1ConnDev.ini") 'Local
-    'Public conIniFile As New INIFile("C:\W3Feeds\KY1ConnTest.ini") 'Test
+    Public conIniFile As New INIFile("C:\W3Feeds\KY1ConnTest.ini") 'Test
 
     Dim connString = conIniFile.GetString("Strings", "DFT", "(none)")
     'Dim connString = "server=10.48.242.249,1433;database=ITW;uid=sysmax;pwd=Condor!" '20140817 'PROD
@@ -49,15 +49,15 @@ Module Module1
     Dim gblFT1Count As Integer = 0
     Public Sub SendMessage(ByRef strMsg As String)
         Dim file As System.IO.StreamWriter
-        file = My.Computer.FileSystem.OpenTextFileWriter("d:\DFTLog\DFTlog.txt", True) '20140817 Prod
-        'file = My.Computer.FileSystem.OpenTextFileWriter("c:\DFTLog\DFTlog.txt", True) '20140817 Test
+        'file = My.Computer.FileSystem.OpenTextFileWriter("d:\DFTLog\DFTlog.txt", True) '20140817 Prod
+        file = My.Computer.FileSystem.OpenTextFileWriter("c:\DFTLog\ULH\DFTlog.txt", True) '20140817 Test
         'file = My.Computer.FileSystem.OpenTextFileWriter("C:\KY1 Test Environment\DFTLog\DFTlog.txt", True) '20140817 Local
         file.WriteLine(strMsg)
         file.Close()
 
     End Sub
     Sub Main()
-        strOutputDirectory = objIniFile.GetString("DFT", "DFToutputdirectory", "(none)") 'c:\feedsW3\DFT\
+        strOutputDirectory = objIniFile.GetString("DFTULH", "DFToutputdirectory", "(none)") 'c:\feedsW3\DFT\
         Dim DFTConnection As New SqlConnection(connString)
         Dim DFTCommand As New SqlCommand
         DFTCommand.Connection = DFTConnection
@@ -74,7 +74,9 @@ Module Module1
             sql = sql & "where(c.hl7Generated Is null) "
             sql = sql & "and c.panum = e.panum "
             sql = sql & "and e.Status not in ('OP','IP','OX','IX') "
-            sql = sql & "and  e.Testcase = 0 "
+            sql = sql & "and e.Testcase = 0 "
+            '20180920 - ULH only
+            sql = sql & "and e.intakefacility IN (400)"
 
             DFTCommand.CommandText = sql
             DFTConnection.Open()
@@ -458,7 +460,7 @@ Module Module1
                     'End If
 
                     '20140405
-                    strHL7Output = strHL7Output & "MSH|^~\&|ITW-mCare|" & dr_DFT.Item("star_region") & "|KY_STAR|" & dr_DFT.Item("star_region") & "|" & strFullDate
+                    strHL7Output = strHL7Output & "MSH|^~\&|ITW-mCare|" & dr_DFT.Item("star_region") & "|ULH_STAR|" & dr_DFT.Item("star_region") & "|" & strFullDate
 
                     '05052005: code to add double bar before ORM^ field
                     strHL7Output = strHL7Output & "||DFT^P03|CHPFFINTRANS|P|2.2" & vbCr
