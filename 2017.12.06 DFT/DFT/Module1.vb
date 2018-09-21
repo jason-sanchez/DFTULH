@@ -733,12 +733,11 @@ Module Module1
     End Sub
 
     Public Sub CreateErrorFile(ByVal errorstring As String)
-        Dim errorfilepath As String = objIniFile.GetString("DFT", "ErrorDir", "(none)")
+        Dim errorfilepath As String = objIniFile.GetString("DFTULH", "ErrorDirULH", "(none)")
         Dim errorfilename As String = String.Format("_DFTError-'" & "'_{0:yyyyMMdd_HH-mm-ss}.txt", Date.Now)
         Dim errorfile = New StreamWriter(errorfilepath & errorfilename, True)
         errorfile.Write(errorstring)
         errorfile.Close()
     End Sub
-
 
 End Module
