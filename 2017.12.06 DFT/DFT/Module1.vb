@@ -27,8 +27,13 @@ Module Module1
     '20121120 - Added patient type in PV1_2.
 
     'Public objIniFile As New INIFile("d:\w3Production\HL7Mapper.ini") '20140817 'Prod
-    Public objIniFile As New INIFile("c:\W3Feeds\HL7Mapper.ini") '20140817 'Test
+    'Public objIniFile As New INIFile("c:\W3Feeds\HL7Mapper.ini") '20140817 'Test
     'Public objIniFile As New INIFile("C:\KY1 Test Environment\HL7Mapper.ini") 'Local
+
+    Private fullinipath As String = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory, "..\..\..\Configs\ULH\HL7Mapper.ini")) ' New test
+    'Private fullinipath As String = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory, "..\..\..\..\..\..\..\..\..\Configs\ULH\HL7Mapper.ini")) ' local
+    Public objIniFile As New INIFile(fullinipath) '20140817 - New Test
+
 
     Dim sql As String = ""
     Dim strOutputDirectory As String = ""
@@ -38,20 +43,28 @@ Module Module1
 
     'Public conIniFile As New INIFile("d:\W3Production\KY1ConnProd.ini") '20140805 Prod
     'Public conIniFile As New INIFile("C:\KY1 Test Environment\KY1ConnDev.ini") 'Local
-    Public conIniFile As New INIFile("C:\W3Feeds\KY1ConnTest.ini") 'Test
+    'Public conIniFile As New INIFile("C:\W3Feeds\KY1ConnTest.ini") 'Test
+
+    Private fullconinipath As String = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory, "..\..\..\Configs\ULH\ConnProd.ini")) 'New Test
+    'Private fullconinipath As String = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory, "..\..\..\..\..\..\..\..\..\Configs\ULH\ConnProd.ini")) 'local
+    Public conIniFile As New INIFile(fullconinipath) '20140805 New Test
 
     Dim connString = conIniFile.GetString("Strings", "DFT", "(none)")
     'Dim connString = "server=10.48.242.249,1433;database=ITW;uid=sysmax;pwd=Condor!" '20140817 'PROD
     'Dim connString = "server=10.48.64.5\sqlexpress;database=ITWTest;uid=sysmax;pwd=Condor!" 'TEST
     'Dim connString = "server=192.168.55.12\sqlexpress;database=ITW;uid=sysmax;pwd=sysmax" '12
+
+
+
     Dim strPANUM As String = ""
 
     Dim gblFT1Count As Integer = 0
     Public Sub SendMessage(ByRef strMsg As String)
         Dim file As System.IO.StreamWriter
         'file = My.Computer.FileSystem.OpenTextFileWriter("d:\DFTLog\DFTlog.txt", True) '20140817 Prod
-        file = My.Computer.FileSystem.OpenTextFileWriter("c:\DFTLog\ULH\DFTlog.txt", True) '20140817 Test
+        'file = My.Computer.FileSystem.OpenTextFileWriter("c:\DFTLog\ULH\DFTlog.txt", True) '20140817 Test
         'file = My.Computer.FileSystem.OpenTextFileWriter("C:\KY1 Test Environment\DFTLog\DFTlog.txt", True) '20140817 Local
+        file = My.Computer.FileSystem.OpenTextFileWriter(objIniFile.GetString("DFTULH", "logs", "(none)"), True)
         file.WriteLine(strMsg)
         file.Close()
 
